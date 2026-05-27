@@ -116,12 +116,13 @@ int treeStringLength(int level, GNode* gnode) {
 
 // nodeStringLength returns the a GNode's string length; it counts the \n but not the final 0.
 static int nodeStringLength(int level, GNode* gnode) {
-    size_t len;
-    char scratch[10];  // To hold the level.
-    sprintf(scratch, "%d", level);
-    len = strlen(scratch) + 1;
-    if (gnode->key) len += strlen(gnode->key) + 1;
-    len += strlen(gnode->tag);
-    if (gnode->value) len += strlen(gnode->value) + 1;
-    return (int) len + 1;
+    if (gnode->key && gnode->value) {
+        return snprintf(null, 0, "%d %s %s %s\n", level, gnode->key, gnode->tag, gnode->value);
+    } else if (gnode->key) {
+        return snprintf(null, 0, "%d %s %s\n", level, gnode->key, gnode->tag);
+    } else if (gnode->value) {
+        return snprintf(null, 0, "%d %s %s\n", level, gnode->tag, gnode->value);
+    } else {
+        return snprintf(null, 0, "%d %s\n", level, gnode->tag);
+    }
 }
