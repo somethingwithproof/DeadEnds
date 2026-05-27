@@ -20,7 +20,7 @@ static String getKey(void* error) {
 	String fileName = ((Error*) error)->fileName;
 	if (!fileName) fileName = "";
 	int lineNumber = ((Error*) error)->lineNumber;
-	sprintf(scratch, "%s%09d", fileName, lineNumber);
+	snprintf(scratch, sizeof(buffer[0]), "%s%09d", fileName, lineNumber);
 	return scratch; // Static memory!
 }
 
