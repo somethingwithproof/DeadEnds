@@ -7,9 +7,12 @@
 
 #include "errors.h"
 #include "list.h"
+#include "path.h"
 
 #define NUMKEYS 64
-#define ERRORKEYSIZE 128
+#define LINEKEYDIGITS 9
+// Room for a full-length path, the zero-padded line number and the NUL.
+#define ERRORKEYSIZE (MAXPATHLENGTH + LINEKEYDIGITS + 1)
 static bool debugging = false;
 
 // getKey returns the comparison key of an error.
@@ -21,7 +24,10 @@ static String getKey(void* error) {
 	String fileName = ((Error*) error)->fileName;
 	if (!fileName) fileName = "";
 	int lineNumber = ((Error*) error)->lineNumber;
-	snprintf(scratch, ERRORKEYSIZE, "%s%09d", fileName, lineNumber);
+	// Truncate the file name, never the line number, so errors in a file with a
+	// very long name still sort by line and distinct lines get distinct keys.
+	int maxName = ERRORKEYSIZE - LINEKEYDIGITS - 1;
+	snprintf(scratch, ERRORKEYSIZE, "%.*s%09d", maxName, fileName, lineNumber);
 	return scratch; // Static memory!
 }
 

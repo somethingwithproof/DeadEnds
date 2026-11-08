@@ -93,9 +93,11 @@ int main(int argc, char** argv) {
 			topGun = person;
 		}
 	ENDLIST
-	if (topGun)
-		printf("Person: %s %s %d\n", topGun->key, topGun->child->value, max);
-	else
+	if (topGun) {
+		// A person record may have no first child line or one with no value.
+		String name = topGun->child && topGun->child->value ? topGun->child->value : "(none)";
+		printf("Person: %s %s %d\n", topGun->key, name, max);
+	} else
 		printf("Person: (none) (none) 0\n");
 	if (timing) printf("%s: Partition: done.\n", gms);
 }
